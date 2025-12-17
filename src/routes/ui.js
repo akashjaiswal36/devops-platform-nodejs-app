@@ -5,7 +5,7 @@ router.get('/', (req, res) => {
   res.send(`
     <html>
       <head>
-        <title>DevOps Platform Demo</title>
+        <title>DevOps Platform Demo akash</title>
         <style>
           body { font-family: Arial; background: #eef2f7; padding: 40px; }
           .card {
@@ -19,7 +19,7 @@ router.get('/', (req, res) => {
       </head>
       <body>
         <div class="card">
-          <h2>🚀 DevOps Platform Demo</h2>
+          <h2>🚀 DevOps Platform Demo jaiswal</h2>
           <p><b>Status:</b> UP</p>
           <p><b>Version:</b> ${process.env.APP_VERSION || 'v1'}</p>
           <p><b>Environment:</b> ${process.env.ENV || 'dev'}</p>
