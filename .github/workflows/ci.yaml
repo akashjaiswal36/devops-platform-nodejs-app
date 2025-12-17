@@ -30,3 +30,18 @@ jobs:
         tags: |
           ${{ secrets.DOCKERHUB_USERNAME }}/devops-demo:latest
           ${{ secrets.DOCKERHUB_USERNAME }}/devops-demo:${{ github.sha }}
+
+    - name: Update GitOps repo (image tag)
+      run: |
+        git config --global user.email "ci-bot@github.com"
+        git config --global user.name "ci-bot"
+
+        git clone https://x-access-token:${{ secrets.GITOPS_REPO_TOKEN }}@github.com/akashjaiswal36/devops-platform-gitops.git
+
+        cd devops-platform-gitops/apps/devops-demo
+
+        sed -i "s/tag:.*/tag: ${GITHUB_SHA}/" values.yaml
+
+        git add values.yaml
+        git commit -m "Update image tag to ${GITHUB_SHA}"
+        git push
