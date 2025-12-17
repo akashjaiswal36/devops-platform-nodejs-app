@@ -1,7 +1,7 @@
 replicaCount: 2
 
 image:
-  repository: devops-demo
+  repository: ajs3ra8/devops-demo
   tag: latest
   pullPolicy: IfNotPresent
 
