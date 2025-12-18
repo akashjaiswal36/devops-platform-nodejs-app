@@ -1,0 +1,48 @@
+name: CI - Build and Push Docker Images
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-south-1
+
+    - name: Login to Amazon ECR
+      run: |
+        aws ecr get-login-password --region ap-south-1 | docker login --username \
+        AWS  --password-stdin \
+        178502900821.dkr.ecr.ap-south-1.amazonaws.com/devops-demo
+
+    - name: Build & push image
+      run: |
+        IMAGE=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-south-1.amazonaws.com/devops-demo
+        docker build -t $IMAGE:${GITHUB_SHA} .
+        docker push $IMAGE:${GITHUB_SHA}
+
+    - name: Update GitOps repo (image tag)
+      run: |
+        git config --global user.email "ci-bot@github.com"
+        git config --global user.name "ci-bot"
+
+        git clone https://x-access-token:${{ secrets.GITOPS_REPO_TOKEN }}@github.com/akashjaiswal36/devops-platform-gitops.git
+
+        cd devops-platform-gitops/apps/devops-demo
+
+        sed -i "s/tag:.*/tag: ${GITHUB_SHA}/" values.yaml
+
+        git add values.yaml
+        git commit -m "Update image tag to ${GITHUB_SHA}"
+        git push
