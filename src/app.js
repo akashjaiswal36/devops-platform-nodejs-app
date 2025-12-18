@@ -9,10 +9,10 @@ const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`🚀 App running on port ${PORT}`);
+
+    // ❌ Simulate failure AFTER startup (for canary rollback demo)
+  process.exit(1);
 });
 
-// Below code is to fail the pipeline to check rollback
-// app.js / server.js
-app.get("/health", (req, res) => {
-  throw new Error("Simulated production failure");
-});
+
+
